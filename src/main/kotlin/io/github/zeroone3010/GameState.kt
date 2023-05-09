@@ -3,17 +3,18 @@ package io.github.zeroone3010
 import io.github.zeroone3010.MoveType.*
 import io.github.zeroone3010.Side.BLUE
 import io.github.zeroone3010.Side.RED
+import kotlin.math.roundToInt
 
-class GameState(
-    private val board: Board,
+data class GameState(
+    val board: Board,
     var turn: Side = BLUE,
     private val moveList: MutableList<Move> = mutableListOf()
 ) {
 
-    fun legalMoves(): List<Move> {
+    fun legalMoves(side: Side = turn): List<Move> {
         val searchAlgorithm = BreadthFirstSearch(board)
-        val currentAttackByCurrentPlayer = getCurrentAttackBy(turn)
-        val currentAttackByOpponent = getCurrentAttackBy(turn.other())
+        val currentAttackByCurrentPlayer = getCurrentAttackBy(side)
+        val currentAttackByOpponent = getCurrentAttackBy(side.other())
         if (currentAttackByCurrentPlayer != null) {
             val (from, to) = currentAttackByCurrentPlayer
             val fromSquare: Square = board.getSquare(from)
@@ -21,7 +22,7 @@ class GameState(
                 .attackReach
                 .find { it.first.coordinates == to }
                 ?.first
-            if (toSquare?.piece?.owner == turn.other()) {
+            if (toSquare?.piece?.owner == side.other()) {
                 return listOf(
                     Move(
                         fromSquare.coordinates,
@@ -35,12 +36,12 @@ class GameState(
         }
 
         val moves = mutableListOf<Move>()
-        for ((square, piece) in board.getPieces(turn)) {
+        for ((square, piece) in board.getPieces(side)) {
             if (currentAttackByOpponent?.second?.equals(square.coordinates) == true) {
                 // Piece under attack can not move, skip its moves
                 continue
             }
-            if (getExhaustedPieceSquare(turn)?.coordinates?.equals(square.coordinates) == true) {
+            if (getExhaustedPieceSquare(side)?.coordinates?.equals(square.coordinates) == true) {
                 // Skip moves of an exhausted piece
                 continue
             }
@@ -51,7 +52,7 @@ class GameState(
                 }
             }
             for ((reachable, distance) in reachableSquares.attackReach) {
-                if (reachable.piece != null && reachable.piece!!.owner != turn) {
+                if (reachable.piece != null && reachable.piece!!.owner != side) {
                     moves.add(Move(square.coordinates, reachable.coordinates, ATTACK, piece, reachable.piece))
                 }
             }
@@ -101,10 +102,11 @@ class GameState(
         }
     }
 
-    fun move(move: Move) {
+    fun move(move: Move): GameState {
         var moveOk = false
-        val source: Square = board.squares[move.from.x][move.from.y]
-        val target: Square = board.squares[move.to.x][move.to.y]
+        val boardCopy: Board = board.clone()
+        val source: Square = boardCopy.squares[move.from.x][move.from.y]
+        val target: Square = boardCopy.squares[move.to.x][move.to.y]
         when (move.type) {
             MOVE -> {
                 if (source.piece != null && target.piece == null) {
@@ -139,14 +141,20 @@ class GameState(
         }
 
         if (moveOk) {
-            moveList.add(move)
-            turn = turn.other()
+            val moveListCopy = moveList.map { it.copy() }.toMutableList()
+            moveListCopy.add(move)
+            return this.copy(board = boardCopy, moveList = moveListCopy, turn = turn.other())
         }
+        return this.copy()
     }
 
     override fun toString(): String {
         val moves = moveList.mapIndexed { index, value ->
-            "${index + 1}. $value"
+            if (index % 2 == 0) {
+                val moveNumber = ((index / 2.0) + 1.0).roundToInt()
+                return@mapIndexed "$moveNumber. $value"
+            }
+            return@mapIndexed value.toString()
         }
 
         val sb = StringBuilder().append("   ")
@@ -162,7 +170,7 @@ class GameState(
             sb.append('\n')
         }
 
-        return "${sb}\nMoves: " + moves + "\nSide to move: ${turn.name}"
+        return "${sb}\nMoves: " + moves.joinToString(" ") + "\nSide to move: ${turn.name}"
     }
 
     private fun squareToString(square: Square): String {

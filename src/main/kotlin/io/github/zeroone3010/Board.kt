@@ -2,7 +2,14 @@ package io.github.zeroone3010
 
 typealias Row = Array<Square>
 
-class Board(var squares: Array<Row>, val kingPieceValue: Int = 6) {
+fun Array<Row>.copy() = Array(size) { get(it).copy() }
+fun Array<Square>.copy() = Array(size) { get(it).copy() }
+
+class Board(val squares: Array<Row>, val kingPieceValue: Int = 6) {
+
+    fun clone(): Board {
+        return Board(squares.copy(), kingPieceValue)
+    }
 
     companion object {
         fun startingPosition(): Board {

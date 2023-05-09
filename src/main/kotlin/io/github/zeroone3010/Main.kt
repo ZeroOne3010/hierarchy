@@ -4,7 +4,7 @@ import io.github.zeroone3010.Side.BLUE
 import io.github.zeroone3010.Side.RED
 
 fun main() {
-    val game = GameState(Board.startingPosition(), BLUE)
+    var game = GameState(Board.startingPosition(), BLUE)
     //val game = GameState(
     //    Board.parseBoard(
     //        """
@@ -36,7 +36,7 @@ fun main() {
         //readLine()
 
         val move = players[game.turn]!!.move(game)
-        game.move(move)
+        game = game.move(move)
 
         println("\nMove is $move, the situation now looks like this:\n" + game)
     }
