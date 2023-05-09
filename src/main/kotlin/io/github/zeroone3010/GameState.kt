@@ -1,9 +1,10 @@
 package io.github.zeroone3010
 
 import io.github.zeroone3010.MoveType.*
-import io.github.zeroone3010.Side.BLUE
-import io.github.zeroone3010.Side.RED
+import io.github.zeroone3010.Side.*
 import kotlin.math.roundToInt
+
+private const val DRAW_AFTER_NUMBER_OF_NON_DESTROY_MOVES = 100
 
 data class GameState(
     val board: Board,
@@ -170,7 +171,12 @@ data class GameState(
             sb.append('\n')
         }
 
-        return "${sb}\nMoves: " + moves.joinToString(" ") + "\nSide to move: ${turn.name}"
+        return """
+               |${sb}
+               |Moves until draw: ${movesUntilDraw()}
+               |Moves: ${moves.joinToString(" ")}
+               |Side to move: ${turn.name}
+               """.trimMargin()
     }
 
     private fun squareToString(square: Square): String {
@@ -191,7 +197,19 @@ data class GameState(
         if (!redIsInTheGame) {
             return BLUE
         }
+        if (movesUntilDraw() == 0) {
+            return NONE
+        }
         return null
+    }
+
+    fun movesUntilDraw(): Int {
+        moveList.reversed().mapIndexed { index, move ->
+            if (move.type == DESTROY) {
+                return DRAW_AFTER_NUMBER_OF_NON_DESTROY_MOVES - index
+            }
+        }
+        return DRAW_AFTER_NUMBER_OF_NON_DESTROY_MOVES
     }
 
     fun Square.hasExhaustedPiece(): Boolean {
