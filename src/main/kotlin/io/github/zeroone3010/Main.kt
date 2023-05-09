@@ -24,7 +24,7 @@ fun main() {
     //    //    MoveType.ATTACK, Piece(RED, 1), Piece(BLUE, 1)))
     //)
 
-    val players = mapOf(BLUE to RandomBot(), RED to GreedyBot())
+    val players = mapOf(BLUE to MinmaxBot(BLUE), RED to GreedyBot())
 
     println("Initial state:\n" + game)
 
@@ -32,8 +32,8 @@ fun main() {
         val moves: List<Move> = game.legalMoves()
         println("\nLegal moves: " + moves.sortedBy { it.toString() })
 
-        //print("Press enter to see a move by ${players[game.turn]!!.name()} (${game.turn.name})...")
-        //readLine()
+//        print("Press enter to see a move by ${players[game.turn]!!.name()} (${game.turn.name})...")
+//        readLine()
 
         val move = players[game.turn]!!.move(game)
         game = game.move(move)
