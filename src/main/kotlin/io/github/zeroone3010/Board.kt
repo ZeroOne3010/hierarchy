@@ -103,6 +103,10 @@ class Board(val squares: Array<Row>, val kingPieceValue: Int = 6) {
             // Cannot attack from Starting Area
             return 0
         }
+        if (side == Side.NONE) {
+            // NONE side cannot attack
+            return 0
+        }
         return neighbors(square).sumOf { neighbor ->
             neighbor.piece?.let {
                 when (it.owner) {
