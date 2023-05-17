@@ -10,3 +10,7 @@ const val ANSI_CYAN_BACKGROUND: String = "\u001b[46m"
 fun zeroBasedIntToLetter(x: Int): Char {
     return ('a'.code + x).toChar()
 }
+
+fun letterToZeroBasedInt(x: Char): Int {
+    return x.code - 'a'.code
+}

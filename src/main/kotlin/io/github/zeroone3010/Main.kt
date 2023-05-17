@@ -24,7 +24,7 @@ fun main() {
     //    //    MoveType.ATTACK, Piece(RED, 1), Piece(BLUE, 1)))
     //)
 
-    val players = mapOf(BLUE to MinmaxBot(BLUE), RED to GreedyBot())
+    val players = mapOf(BLUE to Human(), RED to GreedyBot())
 
     println("Initial state:\n" + game)
 
