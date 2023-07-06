@@ -11,3 +11,7 @@ Hierarkia on suomalainen kahden pelaajan lautapeli jota pelataan 9x9 ruudun laud
 [Pelin kotisivulla](http://www.cs.hut.fi/~framling/hierarkia/index_fi.html) on tietoa pelin historiasta ja sen säännöt.
 
 Tämä projekti on Hierarkia-pelin toteutus Kotlin-kielellä.
+
+# Screenshot / Kuvakaappaus
+
+![A screenshot of the initial state of the game. The game is asking for the human player to make a move.](hierarchy_initial_state.png "A screenshot of the game / Kuvakaappaus pelistä")
