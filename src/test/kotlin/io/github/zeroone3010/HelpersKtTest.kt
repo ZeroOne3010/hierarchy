@@ -1,7 +1,7 @@
 package io.github.zeroone3010
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 class HelpersKtTest : StringSpec() {
     init {
